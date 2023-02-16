@@ -1,0 +1,49 @@
+version: '3'
+services:
+  web:
+    container_name: amarassist_back
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ./web:/var/www/html
+    links:
+      - db
+    networks:
+      - my-network
+
+  db:
+    container_name: amarassist_db
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: local
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravel
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - my-network
+
+  node:
+    container_name: amarassist_front
+    build:
+      context: ./node
+      dockerfile: Dockerfile
+    volumes:
+      - ./node:/app
+    ports:
+      - "8080:8080"
+    networks:
+      - my-network
+
+volumes:
+  db-data:
+
+networks:
+  my-network:
+    driver: bridge
